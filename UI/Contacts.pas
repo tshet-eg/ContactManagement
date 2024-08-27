@@ -24,6 +24,8 @@ type
       var CanSelect: Boolean);
     procedure sbxSearchContactInvokeSearch(Sender: TObject);
     procedure cbxSortByNameClick(Sender: TObject);
+    procedure sdgContactListMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
     FContactsList: TList<TArray<string>>;
@@ -95,9 +97,7 @@ end;
 
 procedure TfrmContacts.sbxSearchContactInvokeSearch(Sender: TObject);
 var
-  vRow, vCol: Integer;
   vSearchName: string;
-  vRowData: TArray<string>;
   vUILogicService: TUILogicService;
 begin
   vSearchName := sbxSearchContact.Text;
@@ -111,6 +111,27 @@ begin
     FContactsList := vUILogicService.SearchByName(vSearchName, sdgContactList);
   finally
     vUILogicService.Free;
+  end;
+end;
+
+procedure TfrmContacts.sdgContactListMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  vRow, vCol: Integer;
+  vUILogicService: TUILogicService;
+begin
+  sdgContactList.MouseToCell(X, Y, vCol, vRow);
+  if (vRow = 0) and (vCol = 1) then
+  begin
+    vUILogicService := TUILogicService.Create(TUILogic.Create);
+    try
+      vUILogicService.SortGridByName(sdgContactList);
+      sdgContactList.Invalidate;
+      cbxSortByName.Checked := True;
+    finally
+      vUILogicService.Free;
+    end;
+
   end;
 end;
 

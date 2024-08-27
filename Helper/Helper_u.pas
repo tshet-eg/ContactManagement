@@ -2,17 +2,19 @@ unit Helper_u;
 
 interface
 
-uses System.SysUtils, Generics.Collections, System.Classes, Vcl.Grids;
+uses System.SysUtils, Generics.Collections, System.Classes, Vcl.Grids,
+  ContactsModel;
 
 type
   THelper = class
     FLastId: integer;
-    function GenerateID: integer;
+    class function GenerateID: integer;
     function LoadTxtToGrid(AGrid: TStringGrid): TStringGrid;
     procedure SaveToLog(const AFileName: string; AFileLog: string);
-    function GetLargestIDFromFile(const AFileName: string): integer;
     function LoadTxtToList: TList<TArray<string>>;
-    procedure GetLargestId;
+  private
+    class var FNewId: integer;
+    class constructor Create;
   end;
 
 var
@@ -22,47 +24,15 @@ implementation
 
 { THelper }
 
-function THelper.GenerateID: integer;
+class constructor THelper.Create;
 begin
-  GetLargestId;
-  inc(FLastId);
-  Result := FLastId;
+  FNewId := 2000;
 end;
 
-procedure THelper.GetLargestId;
-var
-  vFileId, vDeleteFileiD: integer;
+class function THelper.GenerateID: integer;
 begin
-  vFileId := GetLargestIDFromFile('ContactsLog.txt');
-  vDeleteFileiD := GetLargestIDFromFile('DeletedContacts.txt');
-  if vFileId > vDeleteFileiD then
-    FLastId := vFileId
-  else
-    FLastId := vDeleteFileiD;
-end;
-
-function THelper.GetLargestIDFromFile(const AFileName: string): integer;
-var
-  vFile: TextFile;
-  vFileLine: string;
-  vPos, vCurrentId, vMaxId: integer;
-begin
-  vMaxId := 0;
-  AssignFile(vFile, AFileName);
-  Reset(vFile);
-  try
-    while not Eof(vFile) do
-    begin
-      Readln(vFile, vFileLine);
-      vPos := Pos(',', vFileLine);
-      vCurrentId := StrToInt(Copy(vFileLine, 1, vPos - 1));
-      if vCurrentId > vMaxId then
-        vMaxId := vCurrentId;
-    end;
-  finally
-    CloseFile(vFile);
-  end;
-  Result := vMaxId;
+  inc(FNewId);
+  Result := FNewId;
 end;
 
 function THelper.LoadTxtToGrid(AGrid: TStringGrid): TStringGrid;
@@ -129,5 +99,7 @@ begin
     vFile.Free;
   end;
 end;
+
+
 
 end.

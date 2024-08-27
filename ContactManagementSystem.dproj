@@ -141,6 +141,8 @@
         <DCCReference Include="Interfaces\UILogicInterface.pas"/>
         <DCCReference Include="UILogic\UIComponentsLogic.pas"/>
         <DCCReference Include="Services\UILogicService.pas"/>
+        <DCCReference Include="Models\ContactsModel.pas"/>
+        <DCCReference Include="FileHandler\FileHandler.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

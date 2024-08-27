@@ -11,7 +11,9 @@ uses
   ContactValidation in 'Validations\ContactValidation.pas',
   UILogicInterface in 'Interfaces\UILogicInterface.pas',
   UIComponentsLogic in 'UILogic\UIComponentsLogic.pas',
-  UILogicService in 'Services\UILogicService.pas';
+  UILogicService in 'Services\UILogicService.pas',
+  ContactsModel in 'Models\ContactsModel.pas',
+  FileHandler in 'FileHandler\FileHandler.pas';
 
 {$R *.res}
 

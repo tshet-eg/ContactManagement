@@ -79,7 +79,6 @@ begin
     vContactsList.Free;
     tHelperObj.Free;
   end;
-
 end;
 
 function TUILogic.SortGridByName(AGrid: TStringGrid): TStringGrid;

@@ -1,0 +1,32 @@
+unit FileHandler;
+
+interface
+
+uses ContactsModel;
+
+type
+  TFileHandler = class
+    procedure WriteToLog(AContact: TContactModel);
+  end;
+
+implementation
+
+procedure THelper.WriteToLog(AContact: TContactModel);
+var
+  LogText: string;
+  vFile: TStringList;
+begin
+  LogText := AContact.Id + ',' + AContact.Name + ',' + AContact.PhoneNumber +
+    ',' + AContact.AlternateNumber + ',' + AContact.EmailID;
+  vFile := TStringList.Create;
+  try
+    if FileExists('ContactsLog.txt') then
+      vFile.LoadFromFile('ContactsLog.txt');
+    vFile.Add(LogText);
+    vFile.SaveToFile('ContactsLog.txt');
+  finally
+
+  end;
+end;
+
+end.

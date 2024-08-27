@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Helper_u,
-  ContactValidation;
+  ContactsModel, FileHandler;
 
 type
   TfrmAddContact = class(TForm)
@@ -27,9 +27,6 @@ type
     { Private declarations }
   public
     { Public declarations }
-
-  const
-    cFileAddress = 'ContactsLog.txt';
   end;
 
 var
@@ -48,17 +45,18 @@ procedure TfrmAddContact.btnSaveContactClick(Sender: TObject);
 var
   vFileLog, vId: string;
 begin
-  tHelperObj := THelper.Create;
-  ValidationObj := TValidation.Create;
+  FileHandlerObj := TFileHandler.Create;
+  ContactModel := TContactModel.Create;
   try
     vId := IntToStr(tHelperObj.GenerateID);
     try
-      ValidationObj.PhoneNumber := edtPhoneNumber.Text;
-      ValidationObj.PhoneNumber := edtAlternatePhone.Text;
-      ValidationObj.EmailId := edtEmailId.Text;
-      vFileLog := vId + ',' + edtName.Text + ',' + edtPhoneNumber.Text + ',' +
-        edtAlternatePhone.Text + ',' + edtEmailId.Text;
-      tHelperObj.SaveToLog('ContactsLog.txt', vFileLog);
+      ContactModel.ID := vId;
+      ContactModel.Name := edtName.Text;
+      ContactModel.PhoneNumber := edtPhoneNumber.Text;
+      ContactModel.AlternateNumber := edtAlternatePhone.Text;
+      ContactModel.EmailID := edtEmailId.Text;
+
+      FileHandlerObj.WriteToLog(ContactModel);
       ModalResult := mrCancel;
     except
       on E: Exception do
@@ -68,7 +66,7 @@ begin
     end;
   finally
     tHelperObj.Free;
-    ValidationObj.Free;
+    ContactModel.Free;
   end;
 
 end;

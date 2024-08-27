@@ -5,8 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  ContactValidation;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, ContactsModel;
 
 type
   TfrmEditContact = class(TForm)
@@ -53,14 +52,14 @@ var
   vRowArray: TArray<string>;
 begin
   vFileLines := TStringList.Create;
-  ValidationObj := TValidation.Create;
+  ContactModel:= TContactModel.Create;
   try
     if FileExists('ContactsLog.txt') then
       vFileLines.LoadFromFile('ContactsLog.txt');
     try
-      ValidationObj.PhoneNumber := edtPhoneNumber.Text;
-      ValidationObj.PhoneNumber := edtAlternateNumber.Text;
-      ValidationObj.EmailId := edtEmailId.Text;
+      ContactModel.PhoneNumber := edtPhoneNumber.Text;
+      ContactModel.PhoneNumber := edtAlternateNumber.Text;
+      ContactModel.EmailId := edtEmailId.Text;
       for var vRows := 0 to vFileLines.Count - 1 do
       begin
         vLine := vFileLines[vRows];
@@ -84,7 +83,7 @@ begin
     end;
   finally
     vFileLines.Free;
-    ValidationObj.Free;
+    ContactModel.Free;
   end;
 end;
 

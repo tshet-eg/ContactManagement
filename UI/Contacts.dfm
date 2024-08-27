@@ -26,8 +26,9 @@ object frmContacts: TfrmContacts
       DefaultColWidth = 193
       FixedCols = 0
       RowCount = 50
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goFixedColClick, goFixedRowClick]
       TabOrder = 0
+      OnMouseDown = sdgContactListMouseDown
       OnSelectCell = sdgContactListSelectCell
     end
     object pnlHeader: TPanel
@@ -76,7 +77,7 @@ object frmContacts: TfrmContacts
     OnInvokeSearch = sbxSearchContactInvokeSearch
   end
   object cbxSortByName: TCheckBox
-    Left = 496
+    Left = 504
     Top = 113
     Width = 130
     Height = 17
