@@ -1,0 +1,30 @@
+unit UILogicService;
+
+interface
+
+uses UILogicInterface, UIComponentsLogic, Vcl.Grids, System.SysUtils;
+
+type
+  TUILogicService = class
+  private
+    FUILogic: IUILogic;
+  public
+    constructor Create(AUILogic: TUILogic);
+    function SortGridByName(AGrid: TStringGrid): TStringGrid;
+  end;
+
+implementation
+
+{ TUILogicService }
+
+constructor TUILogicService.Create(AUILogic: TUILogic);
+begin
+  FUILogic := AUILogic.Create;
+end;
+
+function TUILogicService.SortGridByName(AGrid: TStringGrid): TStringGrid;
+begin
+   Result:= FUILogic.SortGridByName(AGrid);
+end;
+
+end.

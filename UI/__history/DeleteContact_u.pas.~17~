@@ -1,0 +1,61 @@
+unit DeleteContact_u;
+
+interface
+
+uses System.Classes, SysUtils, Helper_u;
+
+type
+  TDeleteContact = class
+    FGridData: TArray<string>;
+    FDeletedContact: string;
+    procedure DeleteContact;
+    procedure LoadToDeletedtxt;
+  end;
+
+var
+  clsDeleteContact: TDeleteContact;
+
+implementation
+
+{ TDeleteContact }
+
+procedure TDeleteContact.DeleteContact;
+var
+  vFileLine: TStringList;
+  vLine: string;
+  vRowArray: TArray<string>;
+begin
+  vFileLine := TStringList.Create;
+  try
+    if FileExists('ContactsLog.txt') then
+      vFileLine.LoadFromFile('ContactsLog.txt');
+
+    for var vRow := vFileLine.Count - 1 downto 0 do
+    begin
+      vLine := vFileLine[vRow];
+      vRowArray := vLine.split([',']);
+      if vRowArray[0] = FGridData[0] then
+      begin
+        FDeletedContact := string.join(',', vRowArray);
+        vFileLine.Delete(vRow);
+      end;
+    end;
+    vFileLine.SaveToFile('ContactsLog.txt');
+    LoadToDeletedtxt;
+  finally
+    vFileLine.Free;
+  end;
+
+end;
+
+procedure TDeleteContact.LoadToDeletedtxt;
+begin
+  tHelperObj := THelper.Create;
+  try
+    tHelperObj.SaveToLog('DeletedContacts.txt', FDeletedContact);
+  finally
+    tHelperObj.Free;
+  end;
+end;
+
+end.

@@ -1,0 +1,30 @@
+unit PhoneValidation;
+
+interface
+
+uses system.SysUtils;
+
+type
+  TPhoneValidation = class
+  private
+    FPhonenumber: integer;
+    procedure SetPhonenumber(const Value: integer);
+  public
+    // function ValidatePhoneNumber(APhoneNumber: integer): Boolean;
+    property Phonenumber: integer read FPhonenumber write SetPhonenumber;
+  end;
+
+implementation
+
+{ TPhoneValidation }
+
+procedure TPhoneValidation.SetPhonenumber(const Value: integer);
+begin
+
+  if intToStr(FPhonenumber).length = 10 then
+    FPhonenumber := Value
+  else
+    raise Exception.Create('Invalid phone number');
+end;
+
+end.

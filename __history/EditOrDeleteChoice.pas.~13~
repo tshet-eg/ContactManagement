@@ -1,0 +1,48 @@
+unit EditOrDeleteChoice;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, EditContact,
+  DeleteContact_u, DeleteContact;
+
+type
+  TfrmEditOrDelete = class(TForm)
+    pnlEditOrDelete: TPanel;
+    btnEdit: TButton;
+    btnDelete: TButton;
+    procedure btnEditClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations } sGridRowData: TArray<string>;
+  end;
+
+var
+  frmEditOrDelete: TfrmEditOrDelete;    Delete: TDeleteContact;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmEditOrDelete.btnEditClick(Sender: TObject);
+var
+  frmEditContact: TfrmEditContact;
+begin
+  frmEditContact := TfrmEditContact.Create(nil);
+  try
+    SetLength(frmEditContact.sGridData, 4);
+    for var i := 0 to 3 do
+    begin
+      frmEditContact.sGridData[i] := sGridRowData[i];
+    end;
+    frmEditContact.ShowModal;
+  finally
+    frmEditContact.Free;
+    ModalResult := mrCancel;
+  end;
+end;
+
+end.

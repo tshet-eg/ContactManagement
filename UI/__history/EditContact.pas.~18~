@@ -1,0 +1,94 @@
+unit EditContact;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  ContactValidation;
+
+type
+  TfrmEditContact = class(TForm)
+    pnlEdit: TPanel;
+    lblName: TLabel;
+    lblPhoneNumber: TLabel;
+    lblAlternateNumber: TLabel;
+    lblEmailId: TLabel;
+    edtName: TEdit;
+    btnSave: TButton;
+    edtPhoneNumber: TEdit;
+    edtAlternateNumber: TEdit;
+    edtEmailId: TEdit;
+    btnCancel: TButton;
+    procedure FormActivate(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations } sGridData: TArray<string>;
+  end;
+
+var
+  frmEditContact: TfrmEditContact;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmEditContact.btnCancelClick(Sender: TObject);
+begin
+  ModalResult := mrCancel;
+end;
+
+procedure TfrmEditContact.btnSaveClick(Sender: TObject);
+var
+  vFileLines: TStringList;
+  vLine: string;
+  vRowArray: TArray<string>;
+begin
+  vFileLines := TStringList.Create;
+  ValidationObj := TValidation.Create;
+  try
+    if FileExists('ContactsLog.txt') then
+      vFileLines.LoadFromFile('ContactsLog.txt');
+    for var vRows := 0 to vFileLines.Count - 1 do
+    begin
+      vLine := vFileLines[vRows];
+      vRowArray := vLine.Split([',']);
+      try
+        ValidationObj.PhoneNumber := edtPhoneNumber.Text;
+        ValidationObj.PhoneNumber := edtAlternateNumber.Text;
+        ValidationObj.EmailId := edtEmailId.Text;
+        if vRowArray[1] = sGridData[0] then
+        begin
+          vRowArray[1] := edtName.Text;
+          vRowArray[2] := edtPhoneNumber.Text;
+          vRowArray[3] := edtAlternateNumber.Text;
+          vRowArray[4] := edtEmailId.Text;
+          vLine := string.join(',', vRowArray);
+          vFileLines[vRows] := vLine;
+        end;
+        vFileLines.SaveToFile('ContactsLog.txt');
+      except
+        on E: Exception do
+          ShowMessage(E.Message);
+      end;
+    end;
+  finally
+    vFileLines.Free;
+    ValidationObj.Free;
+    ModalResult := mrCancel;
+  end;
+end;
+
+procedure TfrmEditContact.FormActivate(Sender: TObject);
+begin
+  edtName.Text := sGridData[0];
+  edtPhoneNumber.Text := sGridData[1];
+  edtAlternateNumber.Text := sGridData[2];
+  edtEmailId.Text := sGridData[3];
+end;
+
+end.

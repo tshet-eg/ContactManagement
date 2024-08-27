@@ -1,0 +1,21 @@
+program ContactManagementSystem;
+
+uses
+  Vcl.Forms,
+  Contacts in 'Contacts.pas' {Form1},
+  AddContact in 'AddContact.pas' {frmAddContact},
+  PhoneValidation in 'Validations\PhoneValidation.pas',
+  EditOrDeleteChoice in 'EditOrDeleteChoice.pas' {frmEditOrDelete},
+  EditContact in 'CRUD operation\EditContact.pas' {frmEditContact};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TfrmAddContact, frmAddContact);
+  Application.CreateForm(TfrmEditOrDelete, frmEditOrDelete);
+  Application.CreateForm(TfrmEditContact, frmEditContact);
+  Application.Run;
+end.

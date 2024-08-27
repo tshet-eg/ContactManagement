@@ -1,0 +1,14 @@
+unit UILogicInterface;
+
+interface
+
+uses Vcl.Grids;
+
+type
+  IUILogic = interface
+    function SortGridByName(AGrid: TStringGrid): TStringGrid;
+  end;
+
+implementation
+
+end.

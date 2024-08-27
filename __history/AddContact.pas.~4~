@@ -1,0 +1,81 @@
+unit AddContact;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+
+type
+  TfrmAddContact = class(TForm)
+    pnlAdd: TPanel;
+    lblName: TLabel;
+    lblPhoneNumber: TLabel;
+    lblAlternatePhone: TLabel;
+    lblEmailId: TLabel;
+    edtName: TEdit;
+    edtPhoneNumber: TEdit;
+    edtAlternatePhone: TEdit;
+    edtEmailId: TEdit;
+    btnSaveContact: TButton;
+    btnCancel: TButton;
+    procedure btnSaveContactClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmAddContact: TfrmAddContact;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmAddContact.btnSaveContactClick(Sender: TObject);
+var
+  vFile: TStringList;
+  vFileLog: string;
+begin
+  vFileLog := edtName.Text + ',' + edtPhoneNumber.Text + ',' +
+    edtAlternatePhone.Text + ',' + edtEmailId.Text;
+  vFile := TStringList.Create;
+  try
+    vFile.Add(vFileLog);
+    vFile.SaveToFile('ContactsLog.txt');
+  finally
+    vFile.Free;
+  end;
+  Self.CloseModal;
+end;
+
+function GenerateID: integer;
+var
+  vFile: TStringList;
+  vFileLine: string;
+  vLastId, vPos: integer;
+begin
+  vLastId := 0;
+  vFile := TStringList.Create;
+  try
+    vFile.LoadFromFile('ContactsLog.txt');
+    for var vRows := 0 to vFile.Count - 1 do
+    begin
+      vFileLine := vFile[vRows];
+      if vRows = vFile.Count - 1 then
+      begin
+        vPos := pos(',', vFileLine);
+        vLastId := strToInt(Copy(vFileLine, 1, vPos - 1));
+      end;
+
+    end;
+    inc(vLastId);
+    result := vLastId;
+  finally
+    vFile.Free;
+  end;
+end;
+
+end.

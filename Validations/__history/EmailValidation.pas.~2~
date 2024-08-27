@@ -1,0 +1,34 @@
+unit EmailValidation;
+
+interface
+
+uses RegularExpressions;
+
+type
+  TValidateEmail = class
+  private
+    FEmailId: string;
+    procedure SetEmailId(const Value: string);
+  published
+    property EmailId: string read FEmailId write SetEmailId;
+    function IsValidEmail(AEmailId: string): Boolean;
+
+  const
+    cEmailPattern = '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$';
+  end;
+
+implementation
+
+{ TValidateEmail }
+
+function TValidateEmail.IsValidEmail(AEmailId: string): Boolean;
+begin
+  Result := TRegEx.IsMatch(cEmailPattern, AEmailId);
+end;
+
+procedure TValidateEmail.SetEmailId(const Value: string);
+begin
+  FEmailId := Value;
+end;
+
+end.

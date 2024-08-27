@@ -1,0 +1,32 @@
+unit PhoneValidation;
+
+interface
+
+uses system.SysUtils;
+
+type
+  TPhoneValidation = class
+  private
+    FPhonenumber: integer;
+    procedure SetPhonenumber(const Value: integer);
+  public
+    procedure ValidatePhoneNumber(APhoneNumber: integer);
+    property Phonenumber: integer read FPhonenumber write SetPhonenumber;
+  end;
+
+implementation
+
+{ TPhoneValidation }
+
+procedure TPhoneValidation.SetPhonenumber(const Value: integer);
+begin
+  if intToStr(FPhonenumber).length = 10 then
+    FPhonenumber := Value;
+end;
+
+procedure TPhoneValidation.ValidatePhoneNumber(APhoneNumber: integer);
+begin
+  SetPhonenumber(APhoneNumber);
+end;
+
+end.

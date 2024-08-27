@@ -1,0 +1,192 @@
+unit Contacts;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Grids, Vcl.StdCtrls,
+  AddContact, EditOrDeleteChoice, Vcl.WinXCtrls, Generics.Collections;
+
+type
+  TfrmContacts = class(TForm)
+    pnlBody: TPanel;
+    sdgContactList: TStringGrid;
+    pnlHeader: TPanel;
+    btnAddContact: TButton;
+    sbxSearchContact: TSearchBox;
+    btnSort: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure LoadToStringGrid;
+    procedure btnAddContactClick(Sender: TObject);
+    procedure sdgContactListSelectCell(Sender: TObject; ACol, ARow: LongInt;
+      var CanSelect: Boolean);
+    procedure sbxSearchContactInvokeSearch(Sender: TObject);
+    procedure btnSortClick(Sender: TObject);
+  private
+    { Private declarations }
+    FContactsList: TList<TArray<string>>;
+  public
+  { Public declarations }
+
+    const
+    cFileName = 'ContactsLog.txt';
+  end;
+
+var
+  frmContacts: TfrmContacts;
+
+implementation
+
+{$R *.dfm}
+
+uses Helper_u;
+
+procedure TfrmContacts.btnAddContactClick(Sender: TObject);
+begin
+  frmAddContact := TfrmAddContact.Create(nil);
+  try
+    frmAddContact.ShowModal;
+  finally
+    frmAddContact.Free;
+    LoadToStringGrid;
+  end;
+end;
+
+// procedure TfrmContacts.btnSortClick(Sender: TObject);
+// var
+// vRow, vNextRow: Integer;
+// TempRow: TStringList;
+// begin
+// for vRow := 1 to sdgContactList.RowCount - 1 do
+// begin
+// for vNextRow := vRow + 1 to sdgContactList.RowCount - 1 do
+// begin
+// if CompareText(sdgContactList.Cells[0, vRow],
+// sdgContactList.Cells[0, vNextRow]) > 0 then
+// begin
+// TempRow := TStringList.Create;
+// try
+// TempRow.Assign(sdgContactList.Rows[vRow]);
+// sdgContactList.Rows[vRow] := sdgContactList.Rows[vNextRow];
+// sdgContactList.Rows[vNextRow].Assign(TempRow);
+// finally
+// TempRow.Free;
+// end;
+// end;
+// end;
+// end;
+// end;
+procedure TfrmContacts.btnSortClick(Sender: TObject);
+begin
+  tHelperObj := THelper.Create;
+  try
+    sdgContactList := tHelperObj.SortGridByName(sdgContactList);
+  finally
+    tHelperObj.Free;
+  end;
+end;
+
+procedure TfrmContacts.FormCreate(Sender: TObject);
+begin
+  sdgContactList.Cells[0, 0] := 'Name';
+  sdgContactList.Cells[1, 0] := 'Contact Number';
+  sdgContactList.Cells[2, 0] := 'Alternate Contact';
+  sdgContactList.Cells[3, 0] := 'Email ID';
+  LoadToStringGrid;
+end;
+
+procedure TfrmContacts.LoadToStringGrid;
+begin
+  tHelperObj := THelper.Create;
+  try
+    sdgContactList := tHelperObj.LoadTxtToGrid(sdgContactList);
+  finally
+    tHelperObj.Free;
+  end;
+end;
+
+// procedure TfrmContacts.sbxSearchContactChange(Sender: TObject);
+// var
+// vRow, vCol: integer;
+// vRowData: TArray<string>;
+// begin    SetLength(vRowData, 4);
+// for vCol := 0 to sdgContactList.ColCount - 1 do
+// begin
+// //SetLength(vRowData, Length(vRowData) + 1);
+// for vRow := 1 to sdgContactList.RowCount - 1 do
+// begin
+//
+// if sbxSearchContact.Text = sdgContactList.Cells[0, vRow] then
+// begin
+// vRowData[vCol] := sdgContactList.Cells[vCol, vRow];
+// end;
+// end;
+//
+// //sdgContactList.RowCount := 2;
+// //sdgContactList.Rows[1].Clear;
+// sdgContactList.Cells[vCol, 1] := vRowData[vCol];
+// end;
+// end;
+
+procedure TfrmContacts.sbxSearchContactInvokeSearch(Sender: TObject);
+var
+  vRow, vCol: Integer;
+  vSearchName: string;
+  vRowData: TArray<string>;
+begin
+  vSearchName := sbxSearchContact.Text;
+  if vSearchName = '' then
+  begin
+    LoadToStringGrid;
+    exit;
+  end;
+  tHelperObj := THelper.Create;
+  FContactsList := TList < TArray < string >>.Create;
+  try
+    FContactsList := tHelperObj.LoadTxtToList;
+    for vRow := FContactsList.Count - 1 downto 0 do
+    begin
+      vRowData := FContactsList[vRow];
+      if AnsiCompareText(vSearchName, vRowData[1]) <> 0 then
+      begin
+        FContactsList.Remove(vRowData);
+      end;
+    end;
+    sdgContactList.RowCount := FContactsList.Count + 1;
+    for vRow := 0 to FContactsList.Count - 1 do
+    begin
+      vRowData := FContactsList[vRow];
+      for vCol := 1 to Length(vRowData) - 1 do
+      begin
+        sdgContactList.Cells[vCol - 1, vRow + 1] := vRowData[vCol];
+      end;
+    end;
+  finally
+    FContactsList.Free;
+    tHelperObj.Free;
+  end;
+
+end;
+
+procedure TfrmContacts.sdgContactListSelectCell(Sender: TObject;
+  ACol, ARow: LongInt; var CanSelect: Boolean);
+var
+  vCol: Integer;
+begin
+  CanSelect := True;
+  frmEditOrDelete := TfrmEditOrDelete.Create(nil);
+  try
+    SetLength(frmEditOrDelete.sGridRowData, 4);
+    for vCol := 0 to sdgContactList.ColCount - 1 do
+    begin
+      frmEditOrDelete.sGridRowData[vCol] := sdgContactList.Cells[vCol, ARow];
+    end;
+    frmEditOrDelete.ShowModal;
+  finally
+    frmEditOrDelete.Free;
+    LoadToStringGrid;
+  end;
+end;
+
+end.

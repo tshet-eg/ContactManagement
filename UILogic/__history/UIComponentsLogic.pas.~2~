@@ -1,0 +1,41 @@
+unit UIComponentsLogic;
+
+interface
+
+uses UILogicInterface, Vcl.Grids, System.Classes, System.SysUtils;
+
+type
+  TUILogic = class(TInterfacedObject, IUILogic)
+    function SortGridByName(AGrid: TStringGrid): TStringGrid;
+  end;
+
+implementation
+
+{ TUILogic }
+
+function TUILogic.SortGridByName(AGrid: TStringGrid): TStringGrid;
+var
+  vRow, vNextRow: integer;
+  vTempRow: TStringList;
+begin
+  for vRow := 1 to AGrid.RowCount - 1 do
+  begin
+    for vNextRow := vRow + 1 to AGrid.RowCount - 1 do
+    begin
+      if CompareText(AGrid.Cells[1, vRow], AGrid.Cells[1, vNextRow]) > 0 then
+      begin
+        vTempRow := TStringList.Create;
+        try
+          vTempRow.Assign(AGrid.Rows[vRow]);
+          AGrid.Rows[vRow] := AGrid.Rows[vNextRow];
+          AGrid.Rows[vNextRow].Assign(vTempRow);
+        finally
+          vTempRow.Free;
+        end;
+      end;
+    end;
+  end;
+  Result := AGrid;
+end;
+
+end.
