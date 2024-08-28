@@ -31,17 +31,15 @@ implementation
 
 procedure TfrmEditOrDelete.btnDeleteClick(Sender: TObject);
 begin
-  clsDeleteContact := TDeleteContact.Create;
   try
     SetLength(clsDeleteContact.FGridData, length(sGridRowData));
-    for var vCol := 0 to length(sGridRowData)-1 do
+    for var vCol := 0 to length(sGridRowData) - 1 do
     begin
-      clsDeleteContact.FGridData[vCol] := sGridRowData[vCol];
+      TDeleteContact.FGridData[vCol] := sGridRowData[vCol];
     end;
-    clsDeleteContact.DeleteContact;
+    TDeleteContact.DeleteContact;
     ShowMessage('Contact deleted successfull!');
   finally
-    clsDeleteContact.Free;
     ModalResult := mrCancel;
   end;
 end;
@@ -51,7 +49,7 @@ begin
   frmEditContact := TfrmEditContact.Create(nil);
   try
     SetLength(frmEditContact.sGridData, length(sGridRowData));
-    for var vCol := 0 to length(sGridRowData)-1 do
+    for var vCol := 0 to length(sGridRowData) - 1 do
     begin
       frmEditContact.sGridData[vCol] := sGridRowData[vCol];
     end;

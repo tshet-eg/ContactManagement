@@ -37,10 +37,10 @@ procedure TContactModel.SetAlternateNumber(const Value: string);
 begin
   ValidationObj := TValidation.Create;
   try
-    if ValidationObj.isValidNumber(Value) then
-      FPhoneNumber := Value
+    if (ValidationObj.isValidNumber(Value)) or (Value = '') then
+      FAlternateNumber := Value
     else
-      raise Exception.Create('invalid phone number');
+      raise Exception.Create('Invalid phone number');
   finally
     ValidationObj.Free;
   end;
@@ -50,7 +50,7 @@ procedure TContactModel.SetEmailID(const Value: string);
 begin
   ValidationObj := TValidation.Create;
   try
-    if ValidationObj.IsValidEmail(Value) then
+    if (ValidationObj.IsValidEmail(Value)) or (Value = '') then
       FEmailID := Value
     else
       raise Exception.Create('Invalid email ID');
@@ -66,7 +66,10 @@ end;
 
 procedure TContactModel.SetName(const Value: string);
 begin
-  FName := Value;
+  if Value = '' then
+    raise Exception.Create('Name field required')
+  else
+    FName := Value;
 end;
 
 procedure TContactModel.SetPhoneNumber(const Value: string);
@@ -74,9 +77,9 @@ begin
   ValidationObj := TValidation.Create;
   try
     if ValidationObj.isValidNumber(Value) then
-      FAlternateNumber := Value
+      FPhoneNumber := Value
     else
-      raise Exception.Create('invalid phone number');
+      raise Exception.Create('Invalid phone number');
   finally
     ValidationObj.Free;
   end;

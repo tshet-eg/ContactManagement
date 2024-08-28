@@ -3,32 +3,31 @@ unit UIComponentsLogic;
 interface
 
 uses UILogicInterface, Vcl.Grids, System.Classes, System.SysUtils, Helper_u,
-  Generics.Collections;
+  Generics.Collections, FileHandler, ContactsModel;
 
 type
   TUILogic = class(TInterfacedObject, IUILogic)
     function SortGridByName(AGrid: TStringGrid): TStringGrid;
     function SearchByName(ASearchName: string; AGrid: TStringGrid)
       : TList<TArray<string>>;
-    function DeleteContact(AContactRow: TArray<string>;
-      const AFileName: String): string;
+    function DeleteContact(AContactRow: TArray<string>): string;
+    procedure EditContact(AContact: TContactModel);
   end;
 
 implementation
 
 { TUILogic }
 
-function TUILogic.DeleteContact(AContactRow: TArray<string>;
-  const AFileName: String): string;
+function TUILogic.DeleteContact(AContactRow: TArray<string>): string;
 var
   vFileLine: TStringList;
   vLine, vDeletedContact: string;
   vRowArray: TArray<string>;
 begin
   vFileLine := TStringList.Create;
+  FileHandlerObj := TFileHandler.Create;
   try
-    if FileExists(AFileName) then
-      vFileLine.LoadFromFile(AFileName);
+    FileHandlerObj.ReadFromFile(vFileLine);
 
     for var vRow := vFileLine.Count - 1 downto 0 do
     begin
@@ -40,11 +39,44 @@ begin
         vFileLine.Delete(vRow);
       end;
     end;
-    vFileLine.SaveToFile(AFileName);
+    FileHandlerObj.SaveChangesToFile(vFileLine);
   finally
     vFileLine.Free;
+    FileHandlerObj.Free;
   end;
   Result := vDeletedContact;
+end;
+
+procedure TUILogic.EditContact(AContact: TContactModel);
+var
+  vFileLines: TStringList;
+  vLine: string;
+  vRowArray: TArray<string>;
+begin
+  vFileLines := TStringList.Create;
+  FileHandlerObj := TFileHandler.Create;
+  try
+    FileHandlerObj.ReadFromFile(vFileLines);
+    for var vRows := 0 to vFileLines.Count - 1 do
+    begin
+      vLine := vFileLines[vRows];
+      vRowArray := vLine.split([',']);
+
+      if vRowArray[0] = AContact.ID then
+      begin
+        vRowArray[1] := AContact.Name;
+        vRowArray[2] := AContact.PhoneNumber;
+        vRowArray[3] := AContact.AlternateNumber;
+        vRowArray[4] := AContact.EmailID;
+        vLine := string.join(',', vRowArray);
+        vFileLines[vRows] := vLine;
+      end;
+      FileHandlerObj.SaveChangesToFile(vFileLines);
+    end;
+  finally
+    vFileLines.Free;
+    FileHandlerObj.Free;
+  end;
 end;
 
 function TUILogic.SearchByName(ASearchName: string; AGrid: TStringGrid)
@@ -54,14 +86,13 @@ var
   vContactsList: TList<TArray<string>>;
   vRowData: TArray<string>;
 begin
-  tHelperObj := THelper.Create;
   vContactsList := TList < TArray < string >>.Create;
   try
-    vContactsList := tHelperObj.LoadTxtToList;
+    vContactsList := THelper.LoadTxtToList;
     for vRow := vContactsList.Count - 1 downto 0 do
     begin
       vRowData := vContactsList[vRow];
-      if AnsiCompareText(ASearchName, vRowData[1]) <> 0 then
+      if Pos(LowerCase(ASearchName), LowerCase(vRowData[1])) = 0 then
       begin
         vContactsList.Remove(vRowData);
       end;
@@ -77,7 +108,6 @@ begin
     end;
   finally
     vContactsList.Free;
-    tHelperObj.Free;
   end;
 end;
 

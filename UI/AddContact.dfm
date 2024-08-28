@@ -63,6 +63,7 @@ object frmAddContact: TfrmAddContact
       Top = 93
       Width = 153
       Height = 29
+      MaxLength = 10
       TabOrder = 1
     end
     object edtAlternatePhone: TEdit
@@ -70,6 +71,7 @@ object frmAddContact: TfrmAddContact
       Top = 127
       Width = 153
       Height = 29
+      MaxLength = 10
       TabOrder = 2
     end
     object edtEmailId: TEdit

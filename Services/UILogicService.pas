@@ -3,7 +3,7 @@ unit UILogicService;
 interface
 
 uses UILogicInterface, UIComponentsLogic, Vcl.Grids, System.SysUtils,
-  Generics.Collections;
+  Generics.Collections, ContactsModel;
 
 type
   TUILogicService = class
@@ -14,8 +14,8 @@ type
     function SortGridByName(AGrid: TStringGrid): TStringGrid;
     function SearchByName(ASearchName: string; AGrid: TStringGrid)
       : TList<TArray<string>>;
-    function DeleteContact(AContactRow: TArray<string>;
-      const AFileName: String): string;
+    function DeleteContact(AContactRow: TArray<string>): string;
+    procedure EditContact(AContact: TContactModel);
   end;
 
 var
@@ -30,10 +30,14 @@ begin
   FUILogic := AUILogic.Create;
 end;
 
-function TUILogicService.DeleteContact(AContactRow: TArray<string>;
-  const AFileName: String): string;
+function TUILogicService.DeleteContact(AContactRow: TArray<string>): string;
 begin
-  Result := FUILogic.DeleteContact(AContactRow, AFileName);
+  Result := FUILogic.DeleteContact(AContactRow);
+end;
+
+procedure TUILogicService.EditContact(AContact: TContactModel);
+begin
+  FUILogic.EditContact(AContact);
 end;
 
 function TUILogicService.SearchByName(ASearchName: string; AGrid: TStringGrid)

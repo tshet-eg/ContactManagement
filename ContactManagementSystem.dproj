@@ -129,9 +129,6 @@
         <DCCReference Include="UI\AddContact.pas">
             <Form>frmAddContact</Form>
         </DCCReference>
-        <DCCReference Include="UI\EditOrDeleteChoice.pas">
-            <Form>frmEditOrDelete</Form>
-        </DCCReference>
         <DCCReference Include="UI\EditContact.pas">
             <Form>frmEditContact</Form>
         </DCCReference>

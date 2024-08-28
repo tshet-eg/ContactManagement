@@ -6,10 +6,11 @@ uses System.Classes, SysUtils, Helper_u, UILogicService, UIComponentsLogic;
 
 type
   TDeleteContact = class
-    FGridData: TArray<string>;
-    FDeletedContact: string;
-    procedure DeleteContact;
-    procedure LoadToDeletedtxt;
+  public
+   class var FGridData: TArray<string>;
+   class var FDeletedContact: string;
+   class procedure DeleteContact;
+   class procedure LoadToDeletedtxt;
   end;
 
 var
@@ -19,14 +20,13 @@ implementation
 
 { TDeleteContact }
 
-procedure TDeleteContact.DeleteContact;
+class procedure TDeleteContact.DeleteContact;
 var
   vUILogicService: TUILogicService;
 begin
   vUILogicService := TUILogicService.Create(TUILogic.Create);
   try
-    FDeletedContact := vUILogicService.DeleteContact(FGridData,
-      'ContactsLog.txt');
+    FDeletedContact := vUILogicService.DeleteContact(FGridData);
     LoadToDeletedtxt;
   finally
     vUILogicService.Free;
@@ -34,14 +34,9 @@ begin
 
 end;
 
-procedure TDeleteContact.LoadToDeletedtxt;
+class procedure TDeleteContact.LoadToDeletedtxt;
 begin
-  tHelperObj := THelper.Create;
-  try
-    tHelperObj.SaveToLog('DeletedContacts.txt', FDeletedContact);
-  finally
-    tHelperObj.Free;
-  end;
+    THelper.SaveToLog('DeletedContacts.txt', FDeletedContact);
 end;
 
 end.

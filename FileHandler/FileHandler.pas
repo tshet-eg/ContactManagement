@@ -7,7 +7,8 @@ uses ContactsModel, System.Classes, System.SysUtils;
 type
   TFileHandler = class
     procedure WriteToLog(AContact: TContactModel);
-    function ReadFromLog: TstringList;
+    procedure ReadFromFile(out AFile: TstringList);
+    procedure SaveChangesToFile(const AFile: TstringList);
   end;
 
 var
@@ -15,19 +16,16 @@ var
 
 implementation
 
-function TFileHandler.ReadFromLog: TstringList;
-var
-  vFile: TstringList;
+procedure TFileHandler.ReadFromFile(out AFile: TstringList);
 begin
-  vFile := TstringList.Create;
-  try
-    if FileExists('ContactsLog.txt') then
-      vFile.LoadFromFile('ContactsLog.txt');
+  AFile := TstringList.Create;
+  if FileExists('ContactsLog.txt') then
+    AFile.LoadFromFile('ContactsLog.txt');
+end;
 
-  finally
-    vFile.Free;
-  end;
-  Result := vFile;
+procedure TFileHandler.SaveChangesToFile(const AFile: TstringList);
+begin
+  AFile.SaveToFile('ContactsLog.txt');
 end;
 
 procedure TFileHandler.WriteToLog(AContact: TContactModel);
@@ -39,8 +37,7 @@ begin
     ',' + AContact.AlternateNumber + ',' + AContact.EmailID;
   vFile := TstringList.Create;
   try
-    if FileExists('ContactsLog.txt') then
-      vFile.LoadFromFile('ContactsLog.txt');
+    ReadFromFile(vFile);
     vFile.Add(LogText);
     vFile.SaveToFile('ContactsLog.txt');
   finally

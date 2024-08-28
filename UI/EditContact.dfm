@@ -73,6 +73,7 @@ object frmEditContact: TfrmEditContact
       Top = 134
       Width = 185
       Height = 29
+      MaxLength = 10
       TabOrder = 2
     end
     object edtAlternateNumber: TEdit
@@ -80,6 +81,7 @@ object frmEditContact: TfrmEditContact
       Top = 186
       Width = 185
       Height = 29
+      MaxLength = 10
       TabOrder = 3
     end
     object edtEmailId: TEdit

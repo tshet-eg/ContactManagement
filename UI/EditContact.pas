@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, ContactsModel;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  ContactsModel, FileHandler, UIComponentsLogic, UILogicService;
 
 type
   TfrmEditContact = class(TForm)
@@ -47,46 +48,30 @@ end;
 
 procedure TfrmEditContact.btnSaveClick(Sender: TObject);
 var
-  vFileLines: TStringList;
-  vLine: string;
-  vRowArray: TArray<string>;
+  vUILogicService: TUILogicService;
 begin
-  vFileLines := TStringList.Create;
-  ContactModel:= TContactModel.Create;
+  vUILogicService := TUILogicService.Create(TUILogic.Create);
+  ContactModel := TContactModel.Create;
   try
-    if FileExists('ContactsLog.txt') then
-      vFileLines.LoadFromFile('ContactsLog.txt');
     try
+      ContactModel.ID := sGridData[0];
+      ContactModel.Name := edtName.Text;
       ContactModel.PhoneNumber := edtPhoneNumber.Text;
-      ContactModel.PhoneNumber := edtAlternateNumber.Text;
+      ContactModel.AlternateNumber := edtAlternateNumber.Text;
       ContactModel.EmailId := edtEmailId.Text;
-      for var vRows := 0 to vFileLines.Count - 1 do
-      begin
-        vLine := vFileLines[vRows];
-        vRowArray := vLine.Split([',']);
-
-        if vRowArray[0] = sGridData[0] then
-        begin
-          vRowArray[1] := edtName.Text;
-          vRowArray[2] := edtPhoneNumber.Text;
-          vRowArray[3] := edtAlternateNumber.Text;
-          vRowArray[4] := edtEmailId.Text;
-          vLine := string.join(',', vRowArray);
-          vFileLines[vRows] := vLine;
-        end;
-        vFileLines.SaveToFile('ContactsLog.txt');
-      end;
+      vUILogicService.EditContact(ContactModel);
       ModalResult := mrCancel;
     except
       on E: Exception do
         ShowMessage(E.Message);
     end;
-  finally
-    vFileLines.Free;
-    ContactModel.Free;
-  end;
-end;
 
+  finally
+    ContactModel.Free;
+    vUILogicService.Free;
+  end;
+
+end;
 
 procedure TfrmEditContact.FormActivate(Sender: TObject);
 begin

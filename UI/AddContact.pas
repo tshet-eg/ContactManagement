@@ -48,7 +48,7 @@ begin
   FileHandlerObj := TFileHandler.Create;
   ContactModel := TContactModel.Create;
   try
-    vId := IntToStr(tHelperObj.GenerateID);
+    vId := THelper.GenerateID;
     try
       ContactModel.ID := vId;
       ContactModel.Name := edtName.Text;
@@ -65,7 +65,7 @@ begin
       end;
     end;
   finally
-    tHelperObj.Free;
+    FileHandlerObj.Free;
     ContactModel.Free;
   end;
 

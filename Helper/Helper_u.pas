@@ -3,18 +3,16 @@ unit Helper_u;
 interface
 
 uses System.SysUtils, Generics.Collections, System.Classes, Vcl.Grids,
-  ContactsModel;
+  ContactsModel, FileHandler;
 
 type
   THelper = class
-    FLastId: integer;
-    class function GenerateID: integer;
-    function LoadTxtToGrid(AGrid: TStringGrid): TStringGrid;
-    procedure SaveToLog(const AFileName: string; AFileLog: string);
-    function LoadTxtToList: TList<TArray<string>>;
-  private
-    class var FNewId: integer;
-    class constructor Create;
+    class function GenerateID: string;
+    class function LoadTxtToGrid(AGrid: TStringGrid): TStringGrid;
+    class procedure SaveToLog(const AFileName: string; AFileLog: string);
+    class function LoadTxtToList: TList<TArray<string>>;
+    class function CopySelectedRow(ASelectedRow, ADestRow: TArray<string>)
+      : TArray<string>;
   end;
 
 var
@@ -24,18 +22,23 @@ implementation
 
 { THelper }
 
-class constructor THelper.Create;
+class function THelper.CopySelectedRow(ASelectedRow, ADestRow: TArray<string>)
+  : TArray<string>;
 begin
-  FNewId := 2000;
+  SetLength(ADestRow, length(ASelectedRow));
+  for var vCol := 0 to length(ASelectedRow) - 1 do
+  begin
+    ADestRow[vCol] := ASelectedRow[vCol];
+  end;
+  Result := ADestRow;
 end;
 
-class function THelper.GenerateID: integer;
+class function THelper.GenerateID: string;
 begin
-  inc(FNewId);
-  Result := FNewId;
+  Result := FormatDateTime('yyyymmddhhnnsszzz', Now);
 end;
 
-function THelper.LoadTxtToGrid(AGrid: TStringGrid): TStringGrid;
+class function THelper.LoadTxtToGrid(AGrid: TStringGrid): TStringGrid;
 var
   vFile: TStringList;
   vFileLine: string;
@@ -43,26 +46,27 @@ var
   vRow, vCol: integer;
 begin
   vFile := TStringList.Create;
+  FileHandlerObj := TFileHandler.Create;
   try
-    if FileExists('ContactsLog.txt') then
-      vFile.LoadFromFile('ContactsLog.txt');
+    FileHandlerObj.ReadFromFile(vFile);
     AGrid.RowCount := vFile.Count + 1;
     for vRow := 0 to vFile.Count - 1 do
     begin
       vFileLine := vFile[vRow];
       vFileRow := vFileLine.Split([',']);
-      for vCol := 0 to Length(vFileRow) - 1 do
+      for vCol := 0 to length(vFileRow) - 1 do
       begin
         AGrid.Cells[vCol, vRow + 1] := vFileRow[vCol];
       end;
     end;
   finally
     vFile.Free;
+    FileHandlerObj.Free;
   end;
   Result := AGrid;
 end;
 
-function THelper.LoadTxtToList: TList<TArray<string>>;
+class function THelper.LoadTxtToList: TList<TArray<string>>;
 var
   vFile: TStringList;
   vFileRow: string;
@@ -70,9 +74,9 @@ var
   vContactsList: TList<TArray<string>>;
 begin
   vFile := TStringList.Create;
+  FileHandlerObj := TFileHandler.Create;
   try
-    if FileExists('ContactsLog.txt') then
-      vFile.LoadFromFile('ContactsLog.txt');
+    FileHandlerObj.ReadFromFile(vFile);
     for var vRow := 0 to vFile.Count - 1 do
     begin
       vFileRow := vFile[vRow];
@@ -81,11 +85,12 @@ begin
     end;
   finally
     vFile.Free;
+    FileHandlerObj.Free;
   end;
   Result := vContactsList;
 end;
 
-procedure THelper.SaveToLog(const AFileName: string; AFileLog: string);
+class procedure THelper.SaveToLog(const AFileName: string; AFileLog: string);
 var
   vFile: TStringList;
 begin
@@ -99,7 +104,5 @@ begin
     vFile.Free;
   end;
 end;
-
-
 
 end.
