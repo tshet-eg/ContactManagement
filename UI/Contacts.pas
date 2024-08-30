@@ -21,6 +21,7 @@ type
     pmEditOrDelete: TPopupMenu;
     EditContact: TMenuItem;
     DeleteContact: TMenuItem;
+    StaticText1: TStaticText;
     procedure FormCreate(Sender: TObject);
     procedure LoadToStringGrid;
     procedure btnAddContactClick(Sender: TObject);
@@ -131,6 +132,8 @@ end;
 procedure TfrmContacts.sbxSearchContactInvokeSearch(Sender: TObject);
 begin
   SearchByName;
+  if sdgContactList.RowCount = 1 then
+    ShowMessage('No results found!!');
 end;
 
 procedure TfrmContacts.sdgContactListContextPopup(Sender: TObject;
@@ -165,7 +168,6 @@ begin
     try
       if cbxSortByName.Checked = False then
       begin
-
         sdgContactList := vUILogicService.SortGridByName(sdgContactList);
         cbxSortByName.Checked := True;
       end

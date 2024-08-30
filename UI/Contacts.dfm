@@ -78,6 +78,22 @@ object frmContacts: TfrmContacts
       OnChange = sbxSearchContactChange
       OnInvokeSearch = sbxSearchContactInvokeSearch
     end
+    object StaticText1: TStaticText
+      Left = 360
+      Top = 312
+      Width = 120
+      Height = 25
+      Alignment = taCenter
+      Caption = 'No results found'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 4
+      Visible = False
+    end
   end
   object cbxSortByName: TCheckBox
     Left = 248
